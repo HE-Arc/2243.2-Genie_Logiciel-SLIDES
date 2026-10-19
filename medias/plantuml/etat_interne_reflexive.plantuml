@@ -1,0 +1,9 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+state "état" as S
+S : entry / bonjour
+S : exit / au revoir
+S --> S : salut / serrer main
+@enduml

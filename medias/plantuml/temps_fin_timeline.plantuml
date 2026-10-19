@@ -1,0 +1,18 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+hide time-axis
+robust ":Virus" as V
+V has Execution,Triggering,Propagation,Dormant
+@0
+V is Dormant
+@10
+V is Propagation
+@15
+V is Triggering
+@20
+V is Execution
+@25
+V is {hidden}
+@enduml

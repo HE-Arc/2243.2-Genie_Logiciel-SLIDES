@@ -1,0 +1,40 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+scale 10 as 110 pixels
+concise "Dishwasher" as D
+concise "Tank" as T
+@0
+D is Off
+T is Empty
+@8
+D is Filling
+@10
+T is Filling
+@18
+D is Rinsing
+@20
+T is Full
+@33
+D is Washing
+@53
+D is Draining
+@57
+T is Draining
+@67
+D is Drying
+@69
+T is Empty
+@80
+T is {hidden}
+@85
+D is {hidden}
+@110
+D@8 -> T@10 : evTankFill()
+D@18 -> T@20 : evTankFull()
+D@53 -> T@57 : evDraining()
+D@67 -> T@69 : evEmpty()
+D@18 <-> @53 : {20..35}
+D@67 <-> @85 : 8
+@enduml

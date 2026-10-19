@@ -1,0 +1,9 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+left to right direction
+state A
+state B
+A --> B : Événement / Action
+@enduml

@@ -1,0 +1,27 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+hide time-axis
+robust ":Virus" as V
+analog ":Temperature" between 0 and 40 as T
+V has Execution,Triggering,Propagation,Dormant
+@0
+V is Dormant
+T is 12
+@10
+T is 9
+@20
+V is Propagation
+T is 16
+@25
+V is Triggering
+@30
+V is Execution
+T is 28
+@40
+T is 32
+@50
+T is 24
+@55
+@enduml

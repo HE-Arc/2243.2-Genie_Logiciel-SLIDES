@@ -1,0 +1,83 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+title sd Website Timing
+hide time-axis
+scale 1 as 16 pixels
+robust ":JSP" as JSP
+robust ":Data Access" as DA
+robust ":Servlet" as SV
+robust ":DNS Resolver" as DNS
+robust ":Web Browser" as WB
+robust ":Web User" as WU
+JSP has Processing
+JSP has "Sending Response" as Sending
+JSP has Waiting
+DA has Processing,Waiting
+SV has Processing,Waiting
+DNS has Processing,Idle
+WB has Waiting,Processing,Idle
+WU has Viewing,Waiting,Idle
+@0
+JSP is Waiting
+DA is Waiting
+SV is Waiting
+DNS is Idle
+WB is Idle
+WU is Idle
+@16
+WU is Waiting
+@18
+WB is Processing
+@20
+WB is Waiting
+@22
+DNS is Processing
+@28
+DNS is Idle
+@30
+WB is Processing
+@32
+WB is Idle
+@36
+SV is Processing
+WB is Waiting
+@40
+SV is Waiting
+DA is Processing
+@46
+DA is Waiting
+@48
+SV is Processing
+@53
+SV is Waiting
+@56
+JSP is Processing
+@62
+JSP is Sending
+@69
+WB is Processing
+@70
+JSP is Waiting
+@74
+WB is Idle
+@77
+WU is Viewing
+@83
+WU@16 -> WB@18 : URL
+WB@20 -> DNS@22 : resolve URL
+DNS@28 --> WB@30
+WB@32 -> SV@36 : HTTP request
+SV@40 -> DA@40 : get data
+DA@46 --> SV@48
+SV@53 -> JSP@56 : «forward»
+JSP@62 --> WB@69 : HTTP response
+WB@74 --> WU@77 : show page
+DNS@22 <-> @28 : {0..500 ms}
+WB@32 <-> @36 : {50..200 ms}
+DA@40 <-> @46 : {200..700 ms}
+JSP@56 <-> @62 : {10..100 ms}
+JSP@62 <-> @70 : {100..500 ms}
+WB@69 <-> @74 : {10..100 ms}
+@enduml

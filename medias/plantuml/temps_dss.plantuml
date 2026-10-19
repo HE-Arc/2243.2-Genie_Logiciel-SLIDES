@@ -1,0 +1,16 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+hide footbox
+actor "Actor 1" as A
+participant ":System" as S
+A -> S : 2: AfficherDossier()
+activate S
+S --> A : <<Données personnelles>>
+deactivate S
+A -> S : 3: EditerDonnées()
+activate S
+S --> A : <<Données modifiées>>
+deactivate S
+@enduml

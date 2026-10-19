@@ -1,0 +1,14 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+state "Nom d'un état" as S1
+S1 : <b><i>entry</i></b> : action d'entrée
+S1 : <color:red><b><i>on</i></b> e1 : action</color>
+S1 : <b><i>exit</i></b> : action de sortie
+state "Nom d'un état" as S2
+S2 : <b><i>entry</i></b> : action d'entrée
+S2 : <b><i>exit</i></b> : action de sortie
+S2 --> S2 : E1 / Action
+S1 -[hidden]right-> S2
+@enduml

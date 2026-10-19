@@ -1,0 +1,10 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+state "Etat A" as A
+state "Etat B" as B
+A -[#blue]right-> B
+Disponible -right-> Occupée
+A -[hidden]down-> Disponible
+@enduml

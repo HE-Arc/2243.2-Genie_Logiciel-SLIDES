@@ -1,0 +1,10 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+state Emprunté
+state Disponible
+state "En réparation" as Reparation
+Emprunté --> Disponible : Retour [bon état]
+Emprunté --> Reparation : Retour [mauvais état]
+@enduml

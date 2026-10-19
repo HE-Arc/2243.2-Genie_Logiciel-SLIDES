@@ -1,0 +1,12 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+state "Un état" as S
+[*] --> S : /op1
+S : <b><i>entry</i></b> : op2
+S : <b><i>do</i></b> : op3
+S : <b><i>exit</i></b> : op4
+S : <b><i>on</i></b> evt : op5
+S --> [*] : /op6
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+state "En activité" as Activite
+state "Au chômage" as Chomage
+state "À la retraite" as Retraite
+[*] -right-> Chomage
+Chomage -up-> Activite : Embauche
+Activite -down-> Chomage : Perte d'emploi
+Activite -right-> Retraite : Plus de 60 ans
+Chomage -right-> Retraite : Plus de 60 ans
+@enduml

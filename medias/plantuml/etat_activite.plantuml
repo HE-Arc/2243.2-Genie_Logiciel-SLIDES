@@ -1,0 +1,10 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+state "State 1" as S
+S : entry / Action 1
+S : <color:red><b>do / Action 3</b></color>
+S : exit / Action 4
+S : EvnInterne [Cond] / action 5
+@enduml

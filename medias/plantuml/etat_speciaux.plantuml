@@ -1,0 +1,14 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+state creation <<start>>
+state "ETAT 1" as E1
+state "ETAT X" as EX
+state fin <<end>>
+note top of creation : Création de l'objet
+note top of fin : Fin de vie de l'objet
+creation -right-> E1
+EX -right-> fin
+E1 -[hidden]down-> EX
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+[*] --> Ouvert
+Ouvert : entry / ouvrir la porte
+Fermé : entry / fermer la porte
+Ouvert --> Fermé : Fermer
+Fermé --> Ouvert : Ouvrir
+Fermé --> [*]
+@enduml

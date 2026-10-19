@@ -1,0 +1,9 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+state AB {
+  A -right-> B : e1
+}
+AB --> C : e2
+@enduml

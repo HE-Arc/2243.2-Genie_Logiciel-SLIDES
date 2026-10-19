@@ -1,0 +1,10 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+state "Submachine AB" as AB
+AB : include / SubmachineAB
+note right of AB : Lien sur sous-diagramme d'état
+[*] --> AB
+AB --> C : e2
+@enduml

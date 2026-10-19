@@ -1,0 +1,13 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+left to right direction
+state initial <<start>>
+state "État\nintermédiaire" as I
+state final <<end>>
+note bottom of initial : État initial
+note bottom of final : État final
+initial --> I
+I --> final
+@enduml

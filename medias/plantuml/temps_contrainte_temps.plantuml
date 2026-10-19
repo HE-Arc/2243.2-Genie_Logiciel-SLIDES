@@ -1,0 +1,15 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+hide time-axis
+scale 10 as 60 pixels
+robust ":Person" as P
+P has Sleep,Awake
+@0
+P is Sleep
+@40
+P is Awake
+@80
+P@30 <-> @50 : {5:40am..6am}
+@enduml

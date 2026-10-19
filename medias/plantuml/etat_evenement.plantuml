@@ -1,0 +1,9 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+hide empty description
+left to right direction
+state "Etat A" as A
+state "Etat B" as B
+A --> B : <color:blue><b><i>événement</i></b></color>
+@enduml
