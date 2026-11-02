@@ -1,0 +1,373 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>HE-Arc - 2243.2 Génie Logiciel - Chapitre 8 - Introduction à GitLab CI/CD</title>
+
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="dist/theme/hearc.css" id="theme">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="https://www.he-arc.ch/wp-content/uploads/2021/12/cropped-hearc-icon-192x192.png"
+    type="image/vnd.microsoft.icon" />
+
+  <!-- Theme used for syntax highlighted code -->
+  <link rel="stylesheet" href="plugin/highlight/vs.css" id="highlight-theme">
+
+  <style>
+    .reveal .center { text-align: center; padding-left: 0; }
+    .reveal .footnote { font-size: 0.6em; }
+    .reveal .small { font-size: 0.8em; }
+
+    /* Nested lists aligned with paragraphs */
+    .reveal ul.plain { display: block; margin-left: 240px; list-style-type: none; }
+    .reveal ul.plain li { margin: 8px 0; }
+    .reveal ol.steps { margin-left: 240px; display: block; }
+    .reveal ol.steps li { margin: 8px 0; }
+
+    .reveal pre code { font-size: 30px; line-height: 1.25em; padding-left: 10px; }
+    .reveal mono { font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+    .reveal h3 mono { text-transform: none; }
+
+    /* Images (diagrams, GitLab screenshots) and their credit */
+    .reveal .figure { text-align: center; padding-left: 0; margin: 0; }
+    .reveal .figure img { margin: 0; box-shadow: 0 0 6px rgba(0, 0, 0, 0.3); }
+    .reveal .credit { font-size: 0.6em; font-weight: bold; padding-left: 200px; }
+
+    .reveal .hell { font-size: 1.3em; font-weight: bold; }
+
+    /* "Compiler le tout" : .gitlab-ci.yml on two columns, job log */
+    .reveal .yaml-file pre { width: 1150px; margin: 0 auto; }
+    .reveal .yaml-file pre code { font-size: 17px; line-height: 1.15em; max-height: 880px; }
+    .reveal .joblog pre { width: 1500px; }
+    .reveal .joblog pre code { font-size: 20px; line-height: 1.25em; max-height: 860px; }
+  </style>
+</head>
+
+<body>
+  <img id="logo-hearc" src="./medias/logo_he-arc.png" alt="Logo HE-ARC">
+  <img id="logo-hesso" src="./medias/logo_hes-so.png" alt="Logo HES-SO">
+  <p id="course-infos">2243.2 Génie Logiciel - 2026-2027</p>
+
+  <!----------          CONTENT          ---------->
+  <div class="reveal">
+    <div class="slides">
+
+      <!----------          TITLE          ---------->
+      <section>
+        <h1>
+          Chapitre 8
+        </h1>
+        <h2>
+          Introduction à GitLab CI/CD
+        </h2>
+        <p>Définitions</p>
+        <p>Qu'est-ce que l'intégration ?</p>
+        <p>Quels sont les risques ?</p>
+        <p>La solution : intégration continue</p>
+        <p>CI/CD et GitLab</p>
+        <p>Compiler le tout</p>
+        <p>Exercice</p>
+      </section>
+
+      <!----------          DÉFINITIONS          ---------->
+      <section>
+
+        <section>
+          <h2>Définitions</h2>
+          <h3>CI vs CD vs CD</h3>
+          <br>
+          <p class="figure"><img src="./medias/cicd_definitions_aws.png" alt="Continuous integration, continuous delivery et continuous deployment : de Source Control à Build, Staging puis Production" width="1500px"></p>
+          <br>
+          <p class="credit">Image : aws.amazon.com</p>
+        </section>
+
+        <section>
+          <h2>Plan</h2>
+          <ol class="steps">
+            <li>Qu'est-ce que l'intégration ?</li>
+            <li>Quels sont les risques ?</li>
+            <li>La solution : intégration continue</li>
+            <li>Utilisation de Gitlab CI/CD</li>
+          </ol>
+        </section>
+
+      </section>
+
+      <!----------          INTÉGRATION          ---------->
+      <section>
+
+        <section>
+          <h2>Qu'est-ce que l'intégration ?</h2>
+          <p>Fusionner <highlight>plusieurs sous-systèmes</highlight> en un seul.</p>
+          <br>
+          <p><highlight>Chaque sous-parties peut</highlight></p>
+          <ul class="plain">
+            <li>être développée séparément</li>
+            <li>utiliser des langages de programmation différents</li>
+            <li>utiliser des architectures différentes</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Projet en C++ : quelles étapes ?</h2>
+          <br>
+          <p><b>Lister les étapes depuis le développement jusqu'au déploiement</b></p>
+        </section>
+
+        <section>
+          <h2>Projet en C++ : quelles étapes ?</h2>
+          <p><b>LOCAL</b><br>
+            Code, compile, link, manual tests, unit tests, integration tests, functional tests, commit, rebase-merge, push</p>
+          <br>
+          <p><b>REMOTE</b><br>
+            Pull, recompile, all tests, installers, sign binaries, install on VMs, all tests, upload installers.</p>
+        </section>
+
+      </section>
+
+      <!----------          RISQUES          ---------->
+      <section>
+
+        <section>
+          <h2>Quels sont les risques ?</h2>
+          <p>En fonction des technologies utilisées ?</p>
+          <br>
+          <p>En fonction du temps entre chaque intégration ?</p>
+          <br>
+          <p class="hell">➔ Integration Hell</p>
+        </section>
+
+      </section>
+
+      <!----------          SOLUTION          ---------->
+      <section>
+
+        <section>
+          <h2>La solution : intégration continue</h2>
+          <p>Intégrer "en continue" ➔ plusieurs fois par jour</p>
+          <br>
+          <p><highlight>CI/CD Permet de :</highlight></p>
+          <ul class="plain">
+            <li>trouver les bugs le plus tôt possible</li>
+            <li>s'assurer que le produit reste livrable</li>
+            <li>vérifier la portabilité (Windows / Mac / Linux)</li>
+            <li>…</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>La solution : intégration continue</h2>
+          <p><highlight>WORKFLOW</highlight></p>
+          <ol class="steps">
+            <li>Faire des modifications <b>en local</b></li>
+            <li>Faire passer <b>TOUS</b> les tests <b>en local</b></li>
+            <li>Fusionner les modifications sur le serveur (git push)</li>
+            <li>Exécuter <b>TOUS</b> les tests sur le serveur (CI/CD)</li>
+            <li>Déployer le produit final et retester (CI/CD)</li>
+          </ol>
+          <br>
+          <p><error>CI/CD est automatique (à chaque push)</error></p>
+        </section>
+
+        <section>
+          <h2>La solution : intégration continue</h2>
+          <p class="figure"><img src="./medias/cicd_gitlab_workflow.png" alt="Workflow GitLab : push, build et tests automatisés, revue, merge, puis déploiement continu en production" height="720px"></p>
+          <p class="credit">Image : gitlab.com</p>
+        </section>
+
+      </section>
+
+      <!----------          CI/CD ET GITLAB          ---------->
+      <section>
+
+        <section>
+          <h2>CI/CD et GitLab</h2>
+          <h3>Set up CI/CD</h3>
+          <p class="figure"><img src="./medias/gitlab_setup_cicd_projet.png" alt="Page d'un projet GitLab, lien « Set up CI/CD » entouré dans le panneau de droite" height="740px"></p>
+        </section>
+
+        <section>
+          <h2>CI/CD et GitLab</h2>
+          <h3>Set up CI/CD</h3>
+          <p class="figure"><img src="./medias/gitlab_setup_cicd_configurer.png" alt="GitLab : « Get up and running with GitLab CI/CD », choix entre « Use a CI/CD component » (Browse catalog) et « Write your own » (Start building)" width="1500px"></p>
+        </section>
+
+        <section>
+          <h2>CI/CD et GitLab</h2>
+          <h3>Set up CI/CD</h3>
+          <p class="figure"><img src="./medias/gitlab_pipeline_editor.png" alt="Pipeline editor de GitLab avec le modèle .gitlab-ci.yml (stages build, test, deploy), message de commit et bouton « Commit changes »" height="740px"></p>
+        </section>
+
+        <section>
+          <h2>CI/CD et GitLab</h2>
+          <h3>Choisir l'image de base : <mono>image: <error>gcc</error></mono></h3>
+          <br>
+          <p class="figure"><img src="./medias/gitlab_build_job.png" alt="Log du build-job réussi : Using Docker executor with image gcc, echo Compiling the code…, Job succeeded" width="1500px"></p>
+        </section>
+
+        <section>
+          <h2>CI/CD et GitLab</h2>
+          <h3>Définir les <highlight><mono>stages</mono></highlight> (défault : <mono>.pre</mono>, <mono>build</mono> , <mono>test</mono> , <mono>deploy</mono> ,<mono>.post</mono>)</h3>
+          <br>
+          <h3>Les <highlight><mono>stages</mono></highlight> contrôlent l'ordre d'exécution des <highlight><mono>jobs</mono></highlight> :</h3>
+          <ul class="plain small">
+            <li><b>Même <highlight><mono>stage</mono></highlight> ➔ les <highlight><mono>jobs</mono></highlight> tournent en parallèle</b></li>
+            <li><b>Sinon ➔ les <highlight><mono>jobs</mono></highlight> attendent les <highlight><mono>jobs</mono></highlight> du <highlight><mono>stage</mono></highlight> précédent</b></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>CI/CD et GitLab</h2>
+          <h3>Installer des outils particuliers : <mono>cmake</mono> et <mono>ninja</mono></h3>
+          <br>
+          <div class="center" style="width: 900px; margin: 0 auto;">
+            <pre><code class="language-yaml" data-trim>
+before_script:
+ - apt-get update --yes
+ - apt-get install --yes cmake
+ - apt-get install --yes ninja-build
+            </code></pre>
+          </div>
+        </section>
+
+      </section>
+
+      <!----------          COMPILER LE TOUT          ---------->
+      <section>
+
+        <section>
+          <h2 style="padding-bottom: 20px;">Compiler le tout</h2>
+          <div class="center yaml-file">
+            <pre><code class="language-yaml" data-trim data-line-numbers>
+image: gcc
+
+before_script:
+ - apt-get update --yes
+ - apt-get install --yes cmake
+ - apt-get install --yes ninja-build
+
+stages:          # List of stages for jobs, and their order of execution
+  - build
+  - test
+  - deploy
+
+build-job:       # This job runs in the build stage, which runs first.
+  tags:
+      - alpine-docker
+  stage: build
+  script:
+    - mkdir BUILD
+    - cd BUILD
+    - cmake -G "Ninja" ..
+    - ninja
+    - ./2243.2_Main
+
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  script:
+    - echo "Running unit tests... This will take about 60 seconds."
+    - sleep 60
+    - echo "Code coverage is 90%"
+
+lint-test-job:   # This job also runs in the test stage.
+  stage: test    # It can run at the same time as unit-test-job (in parallel).
+  script:
+    - echo "Linting code... This will take about 10 seconds."
+    - sleep 10
+    - echo "No lint issues found."
+
+deploy-job:      # This job runs in the deploy stage.
+  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  environment: production
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed."
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>Compiler le tout</h2>
+          <div class="center joblog">
+            <pre><code class="nohighlight" data-trim>
+$ mkdir BUILD
+$ cd BUILD
+$ cmake -G "Ninja" ..
+-- The C compiler identification is GNU 15.2.0
+-- The CXX compiler identification is GNU 15.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/local/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (0.6s)
+-- Generating done (0.0s)
+-- Build files have been written to: /builds/benoit.lecallen/2243.2-gelo1-benoit-le-callennec/BUILD
+$ ninja
+[1/8] Building CXX object Backend/CMakeFiles/2243.2_Backend.dir/backend.cpp.o
+[2/8] Building CXX object CMakeFiles/2243.2_Main.dir/main.cpp.o
+[3/8] Building CXX object Middleware/CMakeFiles/2243.2_Middleware.dir/middleware.cpp.o
+[4/8] Linking CXX static library Backend/lib2243.2_Backend.a
+[5/8] Linking CXX static library Middleware/lib2243.2_Middleware.a
+[6/8] Building CXX object GUI/CMakeFiles/2243.2_GUI.dir/gui.cpp.o
+[7/8] Linking CXX static library GUI/lib2243.2_GUI.a
+[8/8] Linking CXX executable 2243.2_Main
+$ ./2243.2_Main
+GUI Middleware Backend
+Cleaning up project directory and file based variables
+Job succeeded
+            </code></pre>
+          </div>
+        </section>
+
+      </section>
+
+      <!----------          EXERCICE          ---------->
+      <section>
+
+        <section>
+          <h2>Exercice</h2>
+          <p><b>OBJECTIF</b></p>
+          <br>
+          <p>Configurer + intégrer Hello_Cmake dans le CICD</p>
+        </section>
+
+      </section>
+
+    </div>
+  </div>
+
+  <!----------          CONTENT          ---------->
+
+  <script src="dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+      hash: true,
+      width: 1920,
+      height: 1080,
+      transition: "none",
+      center: false,
+      slideNumber: 'c/t',
+
+      // Learn about plugins: https://revealjs.com/plugins/
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+  </script>
+</body>
+
+</html>
