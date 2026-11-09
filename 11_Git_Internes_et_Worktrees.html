@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>HE-Arc - 2243.2 Génie Logiciel - Chapitre 11 - Git : sous le capot et travail en parallèle</title>
+
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="dist/theme/hearc.css" id="theme">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="https://www.he-arc.ch/wp-content/uploads/2021/12/cropped-hearc-icon-192x192.png"
+    type="image/vnd.microsoft.icon" />
+
+  <!-- Theme used for syntax highlighted code -->
+  <link rel="stylesheet" href="plugin/highlight/vs.css" id="highlight-theme">
+
+  <style>
+    .reveal .center { text-align: center; padding-left: 0; }
+    .reveal .footnote { font-size: 0.6em; }
+    .reveal .small { font-size: 0.8em; }
+
+    .reveal ul.plain { display: block; margin-left: 240px; list-style-type: none; }
+    .reveal ul.plain li { margin: 8px 0; }
+    .reveal ol.steps { margin-left: 240px; display: block; }
+    .reveal ol.steps li { margin: 8px 0; }
+    .reveal ol.steps li.current { color: #0000FF; font-weight: bold; }
+
+    .reveal pre code { font-size: 30px; line-height: 1.25em; padding-left: 10px; }
+    .reveal mono { font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+    .reveal h2 mono, .reveal h3 mono { text-transform: none; }
+
+    .reveal .cmd pre { width: 1300px; margin: 0 0 0 200px; }
+    .reveal .term pre { width: 1400px; margin: 0 0 0 200px; }
+    .reveal .term pre code { font-size: 24px; line-height: 1.2em; max-height: 760px; }
+    .reveal .term.tiny pre code { font-size: 19px; }
+
+    .reveal .figure { text-align: center; padding-left: 0; margin: 0; }
+    .reveal .figure img { margin: 0; box-shadow: 0 0 6px rgba(0, 0, 0, 0.3); }
+
+    .reveal .git-overview img { display: block; margin: -40px auto 0; height: 830px; }
+
+    .reveal table.defs { margin-left: 200px; font-size: 0.85em; }
+    .reveal table.defs td { padding: 8px 20px; border-bottom: 1px solid #ccc; vertical-align: top; }
+    .reveal ul.dir li { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin: 4px 0; }
+    .reveal .worktrees img { display: block; margin: 40px auto 0; width: 1800px; }
+  </style>
+</head>
+
+<body>
+  <img id="logo-hearc" src="./medias/logo_he-arc.png" alt="Logo HE-ARC">
+  <img id="logo-hesso" src="./medias/logo_hes-so.png" alt="Logo HES-SO">
+  <p id="course-infos">2243.2 Génie Logiciel - 2026-2027</p>
+
+  <!----------          CONTENT          ---------->
+  <div class="reveal">
+    <div class="slides">
+
+      <!----------          TITLE          ---------->
+      <section>
+        <h1>
+          Chapitre 11
+        </h1>
+        <h2>
+          Git : sous le capot et travail en parallèle
+        </h2>
+        <p>11.1 Vue d'ensemble</p>
+        <p>11.2 Le répertoire <mono>.git</mono></p>
+        <p>11.3 Worktrees</p>
+        <p>Exercice</p>
+      </section>
+
+      <!----------          11.1 VUE D'ENSEMBLE          ---------->
+      <section>
+
+        <section>
+          <h2>11.1 Vue d'ensemble</h2>
+          <div class="git-overview"><img src="./medias/git_vue_ensemble.svg" alt="Diagramme de séquence Working Tree, Index, HEAD, Remote : modifier, restore, modifier, add, modifier, restore, restore --staged, add, commit, puis au choix push, reset --soft, reset --mixed ou reset --hard"></div>
+        </section>
+
+      </section>
+
+      <!----------          11.2 RÉPERTOIRE .GIT          ---------->
+      <section>
+
+        <section>
+          <h2>11.2 Répertoire <mono>.git</mono></h2>
+          <div class="container">
+            <div class="col-left">
+              <ul class="plain dir">
+                <li>hooks</li>
+                <li>info</li>
+                <li>logs</li>
+                <li><b>objects</b></li>
+                <li><b>refs</b></li>
+                <li>worktrees</li>
+              </ul>
+            </div>
+            <div class="col-right">
+              <ul class="plain dir" style="margin-left: 0;">
+                <li>COMMIT_EDITMSG</li>
+                <li>config</li>
+                <li>description</li>
+                <li>FETCH_HEAD</li>
+                <li><b>HEAD</b></li>
+                <li><b>index</b></li>
+                <li>ORIG_HEAD</li>
+                <li>packed-refs</li>
+              </ul>
+            </div>
+          </div>
+          <p class="footnote"><mono>worktrees</mono> n'existe que si le dépôt a des worktrees (voir 11.3).</p>
+        </section>
+
+        <section>
+          <h2>💻 11.2 Répertoire <mono>objects</mono></h2>
+          <p><b>Git stocke le contenu des fichiers sous forme de paires <mono>{hash, content}</mono></b></p>
+          <br>
+          <p><b>À partir du <mono>hash</mono>, on peut récupérer le contenu</b></p>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git cat-file -p &lt;hash&gt;
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>11.2 3 types d'<mono>objects</mono></h2>
+          <p><mono>Blob</mono></p>
+          <ul class="plain"><li>Contenu, taille, type (pas de noms de fichiers)</li></ul>
+          <p><mono>Tree</mono></p>
+          <ul class="plain"><li>L'arborescence, avec les noms de fichiers</li></ul>
+          <p><mono>Commit</mono></p>
+          <ul class="plain"><li><mono>Tree</mono> racine, <mono>commit</mono> parent, info auteur, timestamp</li></ul>
+        </section>
+
+        <section>
+          <h2>💻 11.2 3 types d'<mono>objects</mono></h2>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git cat-file -t &lt;hash&gt;
+
+git cat-file -p main^{tree}
+# ou
+git cat-file -p 'main^{tree}'
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>11.2 Remarques</h2>
+          <p><b>Le <mono>hash</mono> identifiant un <mono>blob</mono> est calculé à partir de <mono>content</mono> et d'un entête contenant la taille du fichier</b></p>
+          <br>
+          <p><b>➔ 2 fichiers identiques, mais dans 2 commits différents pointent sur le même <mono>blob</mono></b></p>
+        </section>
+
+      </section>
+
+      <!----------          11.3 WORKTREES          ---------->
+      <section>
+
+        <section>
+          <h2>11.3 Worktrees : le problème</h2>
+          <p>Vous êtes au milieu d'une feature, avec des modifications non commitées…</p>
+          <p><error>Un bug urgent arrive sur <mono>main</mono>.</error></p>
+          <br>
+          <table class="defs">
+            <tr><td><b>Solution</b></td><td><b>Inconvénient</b></td></tr>
+            <tr><td>Commit « WIP » puis <mono>git switch main</mono></td><td>Un commit à nettoyer ensuite</td></tr>
+            <tr><td><mono>git stash</mono> / <mono>git stash pop</mono></td><td>Facile d'oublier ce qui est stashé</td></tr>
+            <tr><td>Un deuxième <mono>git clone</mono></td><td>Tout re-télécharger, deux dépôts à synchroniser</td></tr>
+            <tr><td><success>Un worktree</success></td><td><success>Un deuxième dossier, le même dépôt</success></td></tr>
+          </table>
+          <br>
+          <p>Avec un commit WIP ou un stash, le dossier de build (CMake) recompile à chaque changement de branche.</p>
+        </section>
+
+        <section>
+          <h2>11.3 Worktrees : le principe</h2>
+          <p><b>Un seul dépôt <mono>.git</mono>, plusieurs dossiers de travail</b>, chacun sur sa branche.</p>
+          <div class="worktrees"><img src="./medias/git_worktrees.svg" alt="Trois dossiers (proj/ sur BLC_001_Feature, proj-hotfix/ sur hotfix, proj-review/ sur BLC_002_Login), chacun avec son Working Tree, son index et son HEAD, pointent vers le même proj/.git (objects, refs, config, hooks, worktrees)"></div>
+        </section>
+
+        <section>
+          <h2>11.3 Créer un worktree</h2>
+          <h3><highlight>Avec une nouvelle branche</highlight></h3>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git worktree add ../proj-hotfix -b hotfix main
+            </code></pre>
+          </div>
+          <p class="small">Crée le dossier <mono>../proj-hotfix</mono> et la branche <mono>hotfix</mono> à partir de <mono>main</mono>.</p>
+          <br>
+          <h3><highlight>Avec une branche existante</highlight></h3>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git worktree add ../proj-review BLC_002_Login
+            </code></pre>
+          </div>
+          <p class="small">Par exemple pour relire la merge request d'un collègue sans toucher à son propre travail.</p>
+        </section>
+
+        <section>
+          <h2>11.3 Lister et supprimer</h2>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+> git worktree list
+D:/dev/proj          7c37a40 [BLC_001_Feature]
+D:/dev/proj-hotfix   4681cfb [hotfix]
+D:/dev/proj-review   1358c5c [BLC_002_Login]
+
+> git worktree remove ../proj-hotfix
+> git branch --delete hotfix
+            </code></pre>
+          </div>
+          <br>
+          <p><mono>git worktree remove</mono> refuse s'il reste des modifications non commitées.</p>
+          <p>Dossier effacé à la main ? <mono>git worktree prune</mono> nettoie les références orphelines.</p>
+        </section>
+
+        <section>
+          <h2>11.3 Une branche = un seul worktree</h2>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+> git worktree add ../proj-feature BLC_001_Feature
+fatal: 'BLC_001_Feature' is already used by worktree at 'D:/dev/proj'
+            </code></pre>
+          </div>
+          <br>
+          <p>Git interdit d'avoir la même branche ouverte dans deux worktrees :</p>
+          <ul class="plain">
+            <li>un commit dans l'un déplacerait la branche sous les pieds de l'autre.</li>
+          </ul>
+          <br>
+          <p>Besoin juste de <b>regarder</b> une version ? <mono>git worktree add --detach ../proj-v1 v1.0</mono></p>
+        </section>
+
+        <section>
+          <h2>11.3 Partagé ou propre à chaque worktree ?</h2>
+          <table class="defs">
+            <tr><td><b>Partagé (un seul exemplaire)</b></td><td><b>Propre à chaque worktree</b></td></tr>
+            <tr><td><mono>objects</mono> : tous les commits, trees, blobs</td><td>Working Tree (les fichiers)</td></tr>
+            <tr><td><mono>refs</mono> : branches, tags, <mono>origin/*</mono></td><td><mono>index</mono></td></tr>
+            <tr><td><mono>config</mono>, <mono>hooks</mono></td><td><mono>HEAD</mono> (la branche courante)</td></tr>
+            <tr><td><mono>git stash</mono></td><td>Fichiers non suivis (<mono>BUILD/</mono>…)</td></tr>
+          </table>
+          <br>
+          <p><success>Créer un worktree ne copie aucun objet : c'est presque instantané.</success></p>
+          <p>Un commit fait dans un worktree est immédiatement visible depuis les autres (<mono>git log hotfix</mono>).</p>
+        </section>
+
+        <section>
+          <h2>11.3 Worktrees sous le capot</h2>
+          <p>Dans un worktree, <mono>.git</mono> n'est pas un dossier mais un <b>fichier</b> :</p>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+> cat ../proj-hotfix/.git
+gitdir: D:/dev/proj/.git/worktrees/proj-hotfix
+            </code></pre>
+          </div>
+          <br>
+          <p>Le dépôt principal garde l'état propre à chaque worktree :</p>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+proj/.git/worktrees/proj-hotfix/
+    HEAD        ← ref: refs/heads/hotfix
+    index
+    gitdir      ← D:/dev/proj-hotfix/.git
+    commondir   ← ../..   (objects, refs partagés)
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>11.3 Cas d'usage</h2>
+          <ul class="plain">
+            <li><highlight>Hotfix</highlight> : corriger <mono>main</mono> sans toucher à la feature en cours</li>
+            <li><highlight>Revue</highlight> : compiler et tester la branche d'un collègue à côté de la sienne</li>
+            <li><highlight>Build long</highlight> : un dossier <mono>BUILD/</mono> par worktree, pas de recompilation complète à chaque changement de branche (chapitre 7)</li>
+            <li><highlight>Comparer</highlight> : lancer deux versions du programme côte à côte</li>
+            <li><highlight>Agents IA</highlight> : plusieurs agents de code travaillent en parallèle, chacun dans son worktree, sans se marcher dessus</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>11.3 Bonnes pratiques</h2>
+          <ul class="plain">
+            <li>Créer les worktrees <b>à côté</b> du dépôt (<mono>../proj-hotfix</mono>), jamais dedans</li>
+            <li>Nommer le dossier d'après la branche</li>
+            <li>Supprimer avec <mono>git worktree remove</mono>, pas avec l'explorateur</li>
+            <li>Faire régulièrement <mono>git worktree list</mono> : un worktree oublié bloque sa branche</li>
+            <li>Les fichiers non suivis (<mono>BUILD/</mono>, <mono>.env</mono>…) ne sont <error>pas</error> copiés dans le nouveau worktree</li>
+          </ul>
+        </section>
+
+      </section>
+
+      <!----------          EXERCICE          ---------->
+      <section>
+
+        <section>
+          <h2>💻 Exercice</h2>
+          <p class="small">Par groupes de 2, sur votre repo GitLab :</p>
+          <ol class="steps small">
+            <li>Créer une branche <mono>&lt;Dev&gt;_&lt;Id&gt;_Feature</mono>, faire un commit, puis laisser une modification <b>non commitée</b></li>
+            <li>Un bug urgent arrive : créer un worktree <mono>../&lt;repo&gt;-hotfix</mono> avec une branche <mono>hotfix</mono> partant de <mono>main</mono></li>
+            <li>Dans le worktree : corriger, commit, fusionner dans <mono>main</mono>, push</li>
+            <li>Supprimer le worktree et la branche <mono>hotfix</mono></li>
+            <li>Revenir dans le dossier principal : la modification non commitée est toujours là. Rebaser la feature sur <mono>main</mono></li>
+          </ol>
+        </section>
+
+      </section>
+
+    </div>
+  </div>
+
+  <!----------          CONTENT          ---------->
+
+  <script src="dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+      hash: true,
+      width: 1920,
+      height: 1080,
+      transition: "none",
+      center: false,
+      slideNumber: 'c/t',
+
+      // Learn about plugins: https://revealjs.com/plugins/
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+  </script>
+</body>
+
+</html>
