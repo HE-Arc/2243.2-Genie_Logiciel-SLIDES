@@ -1,0 +1,436 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>HE-Arc - 2243.2 Génie Logiciel - Chapitre 10 - Git : branches, intégration et réparation</title>
+
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="dist/theme/hearc.css" id="theme">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="https://www.he-arc.ch/wp-content/uploads/2021/12/cropped-hearc-icon-192x192.png"
+    type="image/vnd.microsoft.icon" />
+
+  <!-- Theme used for syntax highlighted code -->
+  <link rel="stylesheet" href="plugin/highlight/vs.css" id="highlight-theme">
+
+  <style>
+    .reveal .center { text-align: center; padding-left: 0; }
+    .reveal .footnote { font-size: 0.6em; }
+    .reveal .small { font-size: 0.8em; }
+
+    .reveal ul.plain { display: block; margin-left: 240px; list-style-type: none; }
+    .reveal ul.plain li { margin: 8px 0; }
+    .reveal ol.steps { margin-left: 240px; display: block; }
+    .reveal ol.steps li { margin: 8px 0; }
+    .reveal ol.steps li.current { color: #0000FF; font-weight: bold; }
+
+    .reveal pre code { font-size: 30px; line-height: 1.25em; padding-left: 10px; }
+    .reveal mono { font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+    .reveal h2 mono, .reveal h3 mono { text-transform: none; }
+
+    .reveal .cmd pre { width: 1300px; margin: 0 0 0 200px; }
+    .reveal .term pre { width: 1400px; margin: 0 0 0 200px; }
+    .reveal .term pre code { font-size: 24px; line-height: 1.2em; max-height: 760px; }
+    .reveal .term.tiny pre code { font-size: 19px; }
+
+    .reveal .figure { text-align: center; padding-left: 0; margin: 0; }
+    .reveal .figure img { margin: 0; box-shadow: 0 0 6px rgba(0, 0, 0, 0.3); }
+
+    .reveal .git-overview img { display: block; margin: -40px auto 0; height: 830px; }
+
+    .reveal table.defs { margin-left: 200px; font-size: 0.85em; }
+    .reveal table.defs td { padding: 8px 20px; border-bottom: 1px solid #ccc; vertical-align: top; }
+    .reveal .conflict { margin: 0 40px; }
+    .reveal .conflict .col-left, .reveal .conflict .col-right { margin: 0 15px; }
+    .reveal .conflict pre { width: 900px; }
+    .reveal .conflict pre code { font-size: 19px; }
+    .reveal .syntax { display: flex; gap: 60px; margin-left: 200px; }
+    .reveal .syntax p { padding-left: 0; margin-bottom: 8px; }
+    .reveal .syntax pre { width: auto; min-width: 560px; margin: 0; }
+    .reveal table.zones { margin-left: 200px; font-size: 0.85em; border-collapse: collapse; }
+    .reveal table.zones th, .reveal table.zones td { padding: 10px 30px; border: 1px solid #ccc; text-align: center; }
+    .reveal table.zones th { background: #eee; }
+  </style>
+</head>
+
+<body>
+  <img id="logo-hearc" src="./medias/logo_he-arc.png" alt="Logo HE-ARC">
+  <img id="logo-hesso" src="./medias/logo_hes-so.png" alt="Logo HES-SO">
+  <p id="course-infos">2243.2 Génie Logiciel - 2026-2027</p>
+
+  <!----------          CONTENT          ---------->
+  <div class="reveal">
+    <div class="slides">
+
+      <!----------          TITLE          ---------->
+      <section>
+        <h1>
+          Chapitre 10
+        </h1>
+        <h2>
+          Git : branches, intégration et réparation
+        </h2>
+        <p>10.1 Vue d'ensemble</p>
+        <p>10.2 Branches</p>
+        <p>10.3 Identifier des commits</p>
+        <p>10.4 Merge et conflits</p>
+        <p>10.5 Rebase</p>
+        <p>10.6 Annuler et réparer</p>
+      </section>
+
+      <!----------          10.1 VUE D'ENSEMBLE          ---------->
+      <section>
+
+        <section>
+          <h2>10.1 Vue d'ensemble</h2>
+          <div class="git-overview"><img src="./medias/git_vue_ensemble.svg" alt="Diagramme de séquence Working Tree, Index, HEAD, Remote : modifier, restore, modifier, add, modifier, restore, restore --staged, add, commit, puis au choix push, reset --soft, reset --mixed ou reset --hard"></div>
+        </section>
+
+      </section>
+
+      <!----------          10.2 BRANCHES          ---------->
+      <section>
+
+        <section>
+          <h2>10.2 Branches</h2>
+          <table class="defs">
+            <tr><td><mono>git branch &lt;nom&gt;</mono></td><td>créer une branche</td></tr>
+            <tr><td><mono>git switch &lt;nom&gt;</mono><br><mono>git checkout &lt;nom&gt;</mono></td><td>passer sur une branche</td></tr>
+            <tr><td><mono>git switch -c &lt;nom&gt;</mono><br><mono>git checkout -b &lt;nom&gt;</mono></td><td>créer une branche et passer dessus</td></tr>
+            <tr><td><mono>git branch</mono></td><td>lister les branches</td></tr>
+            <tr><td><mono>git branch --verbose</mono></td><td>lister les branches (plus des infos)</td></tr>
+            <tr><td><mono>git branch --merged</mono></td><td>lister les branches mergées</td></tr>
+            <tr><td><mono>git branch --no-merged</mono></td><td>lister les branches non-mergées</td></tr>
+            <tr><td><mono>git branch --delete &lt;nom&gt;</mono></td><td>détruit la branche</td></tr>
+            <tr><td><mono>git push origin --delete &lt;nom&gt;</mono></td><td>détruit la branche (sur le serveur)</td></tr>
+          </table>
+        </section>
+
+      </section>
+
+      <!----------          10.3 IDENTIFIER DES COMMITS          ---------->
+      <section>
+
+        <section>
+          <h2>10.3 Identifier un commit</h2>
+          <p><b>Avec son hash</b></p>
+          <p><b>Avec sa branche ➔ dernier commit sur cette branche</b></p>
+          <table class="defs">
+            <tr><td><mono>HEAD</mono></td><td>➔ le dernier commit</td></tr>
+            <tr><td><mono>HEAD~1</mono></td><td>➔ l'avant-dernier / pénultième commit</td></tr>
+            <tr><td><mono>HEAD~2</mono></td><td>➔ l'antépénultième</td></tr>
+            <tr><td><mono>HEAD~3</mono></td><td>➔ le préantépénultième</td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h2>10.3 Identifier plusieurs commits</h2>
+          <p><mono>&lt;from&gt;..&lt;to&gt;</mono></p>
+          <br>
+          <p><mono>HEAD~3..HEAD~1</mono> ➔ <b>tous les commits entre le préantépénultième et l'avant-dernier.</b></p>
+          <br>
+          <p><mono>origin/main..HEAD</mono> ➔ <b>tous les commits à push sur <mono>origin/main</mono></b></p>
+        </section>
+
+      </section>
+
+      <!----------          10.4 MERGE ET CONFLITS          ---------->
+      <section>
+
+        <section>
+          <h2>💻 10.4 Merge workflow</h2>
+          <ol class="steps">
+            <li>Créer puis aller sur sa branche</li>
+            <li>Faire des modifications</li>
+            <li>Commit</li>
+            <li>Aller sur <mono>main</mono> + MAJ</li>
+            <li>Fusionner sa branche dans <mono>main</mono></li>
+            <li class="current">Résoudre les conflits</li>
+            <li>Push</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>💻 10.4 Résoudre les conflits</h2>
+          <h3><highlight>Le même fichier, modifié sur <mono>main</mono> et sur <mono>DEV_Branch</mono></highlight></h3>
+          <div class="container conflict">
+            <div class="col-left">
+              <pre><code class="nohighlight" data-trim data-line-numbers>
+Author: Benoit Le Callennec
+Version 0.1: first edit to this file.
+Version 0.2: second edit to this file to generate a merge commit.
+Version 0.3: some modifications to mark it as modified.
+Version 0.4: modifications on MAIN
+Version 0.5: modifications on MAIN
+Version 0.6: modifications on MAIN
+Version 0.7: modifications on MAIN
+Version 0.8: modifications on MAIN
+Version 0.9: modifications on MAIN
+              </code></pre>
+            </div>
+            <div class="col-right">
+              <pre><code class="nohighlight" data-trim data-line-numbers>
+Author: Benoit Le Callennec
+Version 0.1: first edit to this file.
+Version 0.2: second edit to this file to generate a merge commit.
+Version 0.3: some modifications to mark it as modified.
+Version 0.4: modifications on DEV_Branch
+Version 0.5: modifications on DEV_Branch
+Version 0.6: modifications on DEV_Branch
+Version 0.7: modifications on DEV_Branch
+Version 0.8: modifications on DEV_Branch
+Version 0.9: modifications on DEV_Branch
+              </code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>💻 10.4 Résoudre les conflits</h2>
+          <p class="figure"><img src="./medias/git_conflit_vscode.png" alt="Conflit dans VS Code : bloc « HEAD (Current Change) » avec les versions 0.4 à 0.9 de MAIN, séparateur =======, bloc « DEV_Branch (Incoming Change) » ; boutons Accept Current Change, Accept Incoming Change, Accept Both Changes, Compare Changes" height="760px"></p>
+        </section>
+
+        <section>
+          <h2>💻 10.4 Résoudre les conflits</h2>
+          <h3><highlight>Fichier résolu à la main</highlight></h3>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim data-line-numbers>
+Author: Benoit Le Callennec
+Version 0.1: first edit to this file.
+Version 0.2: second edit to this file to generate a merge commit.
+Version 0.3: some modifications to mark it as modified.
+Version 0.4: modifications on MAIN
+Version 0.5: modifications on DEV_Branch
+Version 0.6: modifications on MAIN
+Version 0.7: modifications on DEV_Branch
+Version 0.8: modifications on MAIN
+Version 0.9: modifications on DEV_Branch
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>💻 10.4 Résoudre les conflits</h2>
+          <ol class="steps">
+            <li>Marquer les conflits comme résolus : <mono>git add &lt;file&gt;</mono></li>
+            <li>Finaliser le merge : <mono>git commit</mono></li>
+          </ol>
+          <br>
+          <p><error>Comment annuler le merge commit ?</error> ➔ voir 10.6</p>
+        </section>
+
+      </section>
+
+      <!----------          10.5 REBASE          ---------->
+      <section>
+
+        <section>
+          <h2>10.5 Modifier plusieurs commits</h2>
+          <h3><highlight><mono>git rebase</mono></highlight></h3>
+          <br>
+          <p><b>Rejoue les commits d'une branche, sur une autre branche</b></p>
+          <br>
+          <p><b>Peut introduire des conflits</b></p>
+          <br>
+          <p><b>Permet de rendre l'historique linéaire</b></p>
+        </section>
+
+        <section>
+          <h2>10.5 Faire des modifications - rebase</h2>
+          <p class="figure"><img src="./medias/git_graph_rebase.png" alt="Historique : main et origin sur « DONE Added parallel author file. », la branche BLC_001_CreateAuthorFile part d'un commit plus ancien" width="1400px"></p>
+        </section>
+
+        <section>
+          <h2>💻 10.5 Faire des modifications - rebase</h2>
+          <div class="syntax">
+            <div>
+              <p class="small"><b>Moderne</b></p>
+              <pre><code class="language-bash" data-trim>
+git switch main
+git pull --rebase
+git switch &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+git rebase main
+git switch main
+git merge --ff-only &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+git push origin main
+git branch --delete &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+              </code></pre>
+            </div>
+            <div>
+              <p class="small"><b>Classique</b></p>
+              <pre><code class="language-bash" data-trim>
+git checkout main
+git pull --rebase
+git checkout &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+git rebase main
+git checkout main
+git merge --ff-only &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+git push origin main
+git branch --delete &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+              </code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>10.5 Modifier plusieurs commits</h2>
+          <h3><highlight><mono>git rebase --interactive</mono></highlight></h3>
+          <br>
+          <p><error>Modifications de plusieurs commits en même temps</error></p>
+        </section>
+
+      </section>
+
+      <!----------          10.6 ANNULER ET RÉPARER          ---------->
+      <section>
+
+        <section>
+          <h2>10.6 Annuler et réparer</h2>
+          <div class="git-overview"><img src="./medias/git_vue_ensemble.svg" alt="Diagramme de séquence Working Tree, Index, HEAD, Remote : modifier, restore, modifier, add, modifier, restore, restore --staged, add, commit, puis au choix push, reset --soft, reset --mixed ou reset --hard"></div>
+        </section>
+
+        <section>
+          <h2>💻 10.6 Undo : <mono>git restore --worktree</mono></h2>
+          <h3><highlight><mono>git restore --worktree &lt;file&gt;</mono></highlight></h3>
+          <p class="small">(ou simplement <mono>git restore &lt;file&gt;</mono>)</p>
+          <p>Remet <mono>&lt;file&gt;</mono> dans le Working Tree <b>à la version de l'index</b></p>
+          <p><error>Les modifications qui ne sont pas dans l'index sont perdues</error></p>
+          <br>
+          <p>Deux cas, selon ce que contient l'index :</p>
+          <ol class="steps">
+            <li>le fichier n'a pas été ajouté à l'index (index = <mono>HEAD</mono>)</li>
+            <li>le fichier a été ajouté à l'index, puis modifié à nouveau</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>💻 10.6 <mono>git restore --worktree</mono> : cas 1</h2>
+          <h3><highlight>Modification non ajoutée à l'index</highlight></h3>
+          <p><mono>Le_Callennec_Benoit_2.txt</mono> : on ajoute la ligne <mono>Version 0.6</mono>, sans <mono>git add</mono>.</p>
+          <table class="zones">
+            <tr><th></th><th>HEAD</th><th>Index</th><th>Working Tree</th></tr>
+            <tr><td><b>Avant</b></td><td><mono>Version 0.5</mono></td><td><mono>Version 0.5</mono></td><td><mono>Version 0.6</mono></td></tr>
+            <tr><td><b>Après</b></td><td><mono>Version 0.5</mono></td><td><mono>Version 0.5</mono></td><td><mono>Version 0.5</mono></td></tr>
+          </table>
+          <br>
+          <p>L'index contient la même version que <mono>HEAD</mono> ➔ retour au dernier commit.</p>
+          <p><error><mono>Version 0.6</mono> est perdue</error></p>
+        </section>
+
+        <section>
+          <h2>💻 10.6 <mono>git restore --worktree</mono> : cas 2</h2>
+          <h3><highlight>Modification ajoutée à l'index, puis modifiée à nouveau</highlight></h3>
+          <p><mono>Le_Callennec_Benoit_2.txt</mono> : <mono>Version 0.6</mono> + <mono>git add</mono>, puis <mono>Version 0.7</mono> (comme en 9.5).</p>
+          <table class="zones">
+            <tr><th></th><th>HEAD</th><th>Index</th><th>Working Tree</th></tr>
+            <tr><td><b>Avant</b></td><td><mono>Version 0.5</mono></td><td><mono>Version 0.6</mono></td><td><mono>Version 0.7</mono></td></tr>
+            <tr><td><b>Après</b></td><td><mono>Version 0.5</mono></td><td><mono>Version 0.6</mono></td><td><mono>Version 0.6</mono></td></tr>
+          </table>
+          <br>
+          <p>Retour à la version de l'<b>index</b>, pas à celle de <mono>HEAD</mono>.</p>
+          <p><error><mono>Version 0.7</mono> est perdue</error> ; <success><mono>Version 0.6</mono> reste dans l'index</success></p>
+          <p class="small">Revenir à <mono>HEAD</mono> partout : <mono>git restore --staged --worktree &lt;file&gt;</mono></p>
+        </section>
+
+        <section>
+          <h2>💻 10.6 Undo : <mono>git restore --staged</mono></h2>
+          <h3><highlight><mono>git restore --staged &lt;file&gt;</mono></highlight></h3>
+          <p>Retire les modifications faites à <mono>&lt;file&gt;</mono> depuis l'index</p>
+          <p><success>Elles restent dans le Working Tree</success> : rien n'est perdu</p>
+        </section>
+
+        <section>
+          <h2>💻 10.6 Undo : déplacer <mono>HEAD</mono></h2>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git reset --soft &lt;commit&gt;
+git reset --mixed &lt;commit&gt;
+git reset --hard &lt;commit&gt;
+            </code></pre>
+          </div>
+          <br>
+          <p>Déplace <mono>HEAD</mono> sur le commit spécifié</p>
+          <table class="defs">
+            <tr><td><mono>--soft</mono></td><td>les modifications sont gardées dans l'index</td></tr>
+            <tr><td><mono>--mixed</mono></td><td>les modifications sont gardées dans le Working Tree</td></tr>
+            <tr><td><mono>--hard</mono></td><td><error>les modifications sont perdues</error></td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h2>10.6 Annuler / modifier un commit</h2>
+          <h3><highlight><mono>git commit --amend</mono></highlight></h3>
+          <p><b>Modifier le dernier commit</b></p>
+          <p><error>ATTENTION : change l'historique</error></p>
+          <br>
+          <h3><highlight><mono>git revert &lt;commit&gt;</mono></highlight></h3>
+          <p><b>Nouvelles modifications pour annuler des modifications précédentes</b></p>
+          <p><b>Peut introduire des conflits</b></p>
+        </section>
+
+        <section>
+          <h2>💻 10.6 Le filet de sécurité : <mono>git reflog</mono></h2>
+          <p>Git note chaque déplacement de <mono>HEAD</mono>, même ceux qui ont « perdu » des commits.</p>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+> git reset --hard HEAD~1
+> git reflog
+4681cfb (HEAD -> main) HEAD@{0}: reset: moving to HEAD~1
+7c37a40 HEAD@{1}: commit: DONE Commit for testing log command
+...
+> git branch oupsy 7c37a40
+            </code></pre>
+          </div>
+          <br>
+          <p>Le commit « perdu » est de nouveau accessible par la branche <mono>oupsy</mono>.</p>
+        </section>
+
+        <section>
+          <h2>10.6 Résumé</h2>
+          <table class="defs">
+            <tr><td><b>Commande</b></td><td><b>Annule…</b></td><td><b>Réécrit l'historique ?</b></td></tr>
+            <tr><td><mono>git restore --worktree</mono></td><td>les modifications du Working Tree absentes de l'index</td><td><success>non</success></td></tr>
+            <tr><td><mono>git restore --staged</mono></td><td>l'ajout dans l'index</td><td><success>non</success></td></tr>
+            <tr><td><mono>git reset</mono></td><td>un ou plusieurs commits</td><td><error>oui</error></td></tr>
+            <tr><td><mono>git commit --amend</mono></td><td>le dernier commit</td><td><error>oui</error></td></tr>
+            <tr><td><mono>git rebase --interactive</mono></td><td>plusieurs commits</td><td><error>oui</error></td></tr>
+            <tr><td><mono>git revert</mono></td><td>un commit, par un nouveau commit</td><td><success>non</success></td></tr>
+          </table>
+          <br>
+          <p><error>Règle d'or : ne jamais réécrire un historique déjà poussé.</error> Utiliser <mono>git revert</mono>.</p>
+        </section>
+
+      </section>
+
+    </div>
+  </div>
+
+  <!----------          CONTENT          ---------->
+
+  <script src="dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+      hash: true,
+      width: 1920,
+      height: 1080,
+      transition: "none",
+      center: false,
+      slideNumber: 'c/t',
+
+      // Learn about plugins: https://revealjs.com/plugins/
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+  </script>
+</body>
+
+</html>
