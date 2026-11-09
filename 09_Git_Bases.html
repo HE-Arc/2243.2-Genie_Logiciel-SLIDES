@@ -1,0 +1,644 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>HE-Arc - 2243.2 Génie Logiciel - Chapitre 9 - Git : le modèle et la boucle quotidienne</title>
+
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="dist/theme/hearc.css" id="theme">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="https://www.he-arc.ch/wp-content/uploads/2021/12/cropped-hearc-icon-192x192.png"
+    type="image/vnd.microsoft.icon" />
+
+  <!-- Theme used for syntax highlighted code -->
+  <link rel="stylesheet" href="plugin/highlight/vs.css" id="highlight-theme">
+
+  <style>
+    .reveal .center { text-align: center; padding-left: 0; }
+    .reveal .footnote { font-size: 0.6em; }
+    .reveal .small { font-size: 0.8em; }
+
+    .reveal ul.plain { display: block; margin-left: 240px; list-style-type: none; }
+    .reveal ul.plain li { margin: 8px 0; }
+    .reveal ol.steps { margin-left: 240px; display: block; }
+    .reveal ol.steps li { margin: 8px 0; }
+    .reveal ol.steps li.current { color: #0000FF; font-weight: bold; }
+
+    .reveal pre code { font-size: 30px; line-height: 1.25em; padding-left: 10px; }
+    .reveal mono { font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+    .reveal h2 mono, .reveal h3 mono { text-transform: none; }
+
+    .reveal .cmd pre { width: 1300px; margin: 0 0 0 200px; }
+    .reveal .term pre { width: 1400px; margin: 0 0 0 200px; }
+    .reveal .term pre code { font-size: 24px; line-height: 1.2em; max-height: 760px; }
+    .reveal .term .git-staged { color: #00A000; }
+    .reveal .term .git-unstaged { color: #E00000; }
+
+    .reveal .figure { text-align: center; padding-left: 0; margin: 0; }
+    .reveal .figure img { margin: 0; box-shadow: 0 0 6px rgba(0, 0, 0, 0.3); }
+
+    .reveal .git-overview img { display: block; margin: -40px auto 0; height: 830px; }
+
+    .reveal table.defs { margin-left: 200px; font-size: 0.85em; }
+    .reveal table.defs td { padding: 8px 20px; border-bottom: 1px solid #ccc; vertical-align: top; }
+    .reveal .syntax { display: flex; gap: 60px; margin-left: 200px; }
+    .reveal .syntax p { padding-left: 0; margin-bottom: 8px; }
+    .reveal .syntax pre { width: auto; min-width: 560px; margin: 0; }
+  </style>
+</head>
+
+<body>
+  <img id="logo-hearc" src="./medias/logo_he-arc.png" alt="Logo HE-ARC">
+  <img id="logo-hesso" src="./medias/logo_hes-so.png" alt="Logo HES-SO">
+  <p id="course-infos">2243.2 Génie Logiciel - 2026-2027</p>
+
+  <!----------          CONTENT          ---------->
+  <div class="reveal">
+    <div class="slides">
+
+      <!----------          TITLE          ---------->
+      <section>
+        <h1>
+          Chapitre 9
+        </h1>
+        <h2>
+          Git : le modèle et la boucle quotidienne
+        </h2>
+        <p>9.1 Qu'est-ce que Git ?</p>
+        <p>9.2 Installation, configuration, clone</p>
+        <p>9.3 Le modèle : Working Tree, Index, HEAD</p>
+        <p>9.4 Observer l'état courant</p>
+        <p>9.5 Enregistrer ses modifications</p>
+        <p>9.6 La boucle quotidienne</p>
+        <p>Exercice</p>
+      </section>
+
+      <!----------          9.1 QU'EST-CE QUE GIT          ---------->
+      <section>
+
+        <section>
+          <h2>9.1 Qu'est-ce que Git ?</h2>
+          <p>Un <b>logiciel de gestion de versions</b></p>
+          <ul class="plain">
+            <li><b>Git</b>, SVN, Mercurial, Perforce…</li>
+          </ul>
+          <p>Conserve l'historique de <b>toutes</b> les modifications avec l'auteur, les différences ligne par ligne, la date, etc.</p>
+          <p>Permet de fusionner des modifications faites au même endroit, en même temps</p>
+          <p>Indispensable pour le travail collaboratif (mais aussi seul)</p>
+          <p>Git est la base de services comme GitHub ou GitLab</p>
+        </section>
+
+        <section>
+          <h2>9.1 Avantages et désavantages de Git</h2>
+          <p><success>Très rapide</success></p>
+          <p><success>Facile de travailler sur plusieurs versions en parallèle (on parle de branches)</success></p>
+          <p><success>Très stable. Il a été conçu à l'origine pour le noyau Linux</success></p>
+          <br>
+          <p><error>Assez complexe</error></p>
+        </section>
+
+      </section>
+
+      <!----------          9.2 INSTALLATION          ---------->
+      <section>
+
+        <section>
+          <h2>9.2 Installation</h2>
+          <p><a href="https://git-scm.com/">https://git-scm.com/</a></p>
+          <br>
+          <p><b>Créer ses clés SSH</b></p>
+          <p class="small"><a href="https://gitlab-etu.ing.he-arc.ch/labinfo/support/-/wikis/how-to-use-git-with-gitlab">https://gitlab-etu.ing.he-arc.ch/labinfo/support/-/wikis/how-to-use-git-with-gitlab</a></p>
+          <br>
+          <p><error>DEVRAIT DÉJÀ AVOIR ÉTÉ FAIT EN HES D'ÉTÉ</error></p>
+        </section>
+
+        <section>
+          <h2>9.2 Configuration</h2>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git config --global user.name "votre_nom"
+git config --global user.email email@he-arc.ch
+            </code></pre>
+          </div>
+          <br>
+          <p><error>DEVRAIT DÉJÀ AVOIR ÉTÉ FAIT EN HES D'ÉTÉ</error></p>
+        </section>
+
+        <section>
+          <h2>9.2 Cloner votre repo GitLab</h2>
+          <p class="figure"><img src="./medias/git_gitlab_clone.png" alt="Page d'un projet GitLab, menu « Clone » ouvert avec les URL « Clone with SSH » et « Clone with HTTPS »" width="1300px"></p>
+          <br>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git clone &lt;votre_repo&gt;.git
+            </code></pre>
+          </div>
+        </section>
+
+      </section>
+
+      <!----------          9.3 LE MODÈLE          ---------->
+      <section>
+
+        <section>
+          <h2>9.3 Vue d'ensemble : définitions</h2>
+          <table class="defs">
+            <tr><td><mono>Working Tree</mono></td><td>Le dossier de travail, avec les modifications en cours</td></tr>
+            <tr><td><mono>Index</mono></td><td>Le prochain commit en préparation : une copie de <mono>HEAD</mono>, plus les modifications ajoutées par <mono>git add</mono></td></tr>
+            <tr><td><mono>HEAD</mono></td><td>Dernier commit de la branche actuelle</td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h2>9.3 Vue d'ensemble</h2>
+          <div class="git-overview"><img src="./medias/git_vue_ensemble.svg" alt="Diagramme de séquence Working Tree, Index, HEAD, Remote : modifier, restore, modifier, add, modifier, restore, restore --staged, add, commit, puis au choix push, reset --soft, reset --mixed ou reset --hard"></div>
+        </section>
+
+      </section>
+
+      <!----------          9.4 ÉTAT COURANT          ---------->
+      <section>
+
+        <section>
+          <h2>9.4 État courant : <mono>git status</mono></h2>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim data-noescape>
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged &lt;file&gt;..." to unstage)
+        <span class="git-staged">modified:   Le_Callennec_Benoit.txt</span>
+
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git restore &lt;file&gt;..." to discard changes in working directory)
+        <span class="git-unstaged">modified:   Le_Callennec_Benoit_2.txt</span>
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+        <span class="git-unstaged">Le_Callennec_Benoit_3.txt</span>
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>💻 9.4 État courant : <mono>git diff</mono></h2>
+          <p><highlight><mono>git diff</mono></highlight> différences entre <mono>Working Tree</mono> et <mono>index</mono></p>
+          <p><highlight><mono>git diff --staged</mono></highlight> différences entre <mono>index</mono> et <mono>HEAD</mono></p>
+          <br>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+diff --git a/Le_Callennec_Benoit_2.txt b/Le_Callennec_Benoit_2.txt
+index d93666c..d1cf665 100644
+--- a/Le_Callennec_Benoit_2.txt
++++ b/Le_Callennec_Benoit_2.txt
+@@ -3,3 +3,4 @@ Version 0.2: parallel commit.
+ Version 0.3: parallel commit 2.
+ Version 0.4: parallel commit 3.
+ Version 0.5: parallel commit coming from main.
++Version 0.6: some modifications to mark it as modified.
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>💻 9.4 État courant : <mono>git log</mono></h2>
+          <p><highlight><mono>git log</mono></highlight> tous les commits</p>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+commit 7c37a406966c5e0401c8d829fb01d34492b89fd7 (HEAD -> main)
+Author: Benoit Le Callennec &lt;benoit.lecallennec@he-arc.ch&gt;
+Date:   Sat Dec 2 19:02:48 2023 +0100
+
+    DONE Commit for testing log command
+
+commit 4681cfb6898c692b136e178011429f0307f3114f (origin/main, origin/HEAD)
+Merge: 1358c5c 40818e5
+Author: Benoit Le Callennec &lt;benoit.lecallennec@he-arc.ch&gt;
+Date:   Sun Nov 26 20:35:34 2023 +0100
+
+    Merge branch 'BLC_MergeCommit'
+
+…
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>💻 9.4 État courant : <mono>git log</mono></h2>
+          <p><highlight><mono>git log -3</mono></highlight> les 3 derniers commits</p>
+          <p><highlight><mono>git log origin/main..HEAD</mono></highlight> les commits pas encore poussés sur <mono>origin/main</mono></p>
+          <br>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+> git log origin/main..HEAD
+commit 7c37a406966c5e0401c8d829fb01d34492b89fd7 (HEAD -> main)
+Author: Benoit Le Callennec &lt;benoit.lecallennec@he-arc.ch&gt;
+Date:   Sat Dec 2 19:02:48 2023 +0100
+
+    DONE Commit for testing log command
+            </code></pre>
+          </div>
+        </section>
+
+
+
+        <section>
+          <h2>💻 9.4 État courant : <mono>git log</mono></h2>
+          <p><highlight><mono>git log --oneline --graph --all</mono></highlight> toutes les branches, en graphe</p>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+> git log --oneline --graph --all
+* 029e608 (HEAD -> main, solving_mess3) DONE Doing important stuff
+* 276dd8f DONE Doing stuff
+* 10cfc1e (solving_mess2, oupsy) DONE Mega algorithm first time!
+* 9588849 (solving_mess, DEV) DONE Start state
+*   354b29c Merge branch 'DEV' into main
+|\
+| * 47c7d2b DONE Modifications on DEV branch
+* | 0742d49 DONE Modifications on main branch
+|/
+* 02c59e8 DONE Restart fresh
+*   d0bdcf7 Merge branch 'DEV'
+|\
+| * dcdd6d9 DONE Modifications on DEV branch
+* | cb62e0c DONE Modifications on main branch
+|/
+* 12ae636 DONE Mega algo
+* b4dd580 DONE mega_algorithm
+* a74a189 DONE Added merge conflict tests
+* 9f1cb20 DONE Some more modifications
+* a80552c DONE Made some modifications
+* b9a1d86 DONE Added file1 to repo
+* 4c713c8 (origin/main, origin/HEAD) Initial commit
+            </code></pre>
+          </div>
+        </section>
+
+      </section>
+
+      <!----------          9.5 ENREGISTRER          ---------->
+      <section>
+
+        <section>
+          <h2>9.5 <mono>git add</mono> + <mono>git commit</mono></h2>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git add &lt;file&gt;
+git commit -m "&lt;message&gt;"
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>💻 9.5 <mono>git add</mono></h2>
+          <p><error>Que se passe-t-il si on modifie un fichier déjà ajouté dans l'index ?</error></p>
+          <p class="small">Avant : <mono>Le_Callennec_Benoit_2.txt</mono> est dans l'index</p>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim data-noescape>
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes to be committed:
+  (use "git restore --staged &lt;file&gt;..." to unstage)
+        <span class="git-staged">modified:   Le_Callennec_Benoit_2.txt</span>
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+        <span class="git-unstaged">Le_Callennec_Benoit_3.txt</span>
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>💻 9.5 <mono>git add</mono></h2>
+          <p>Le fichier apparaît <b>deux fois</b> : la version dans l'index et la version modifiée depuis.</p>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim data-noescape>
+Changes to be committed:
+  (use "git restore --staged &lt;file&gt;..." to unstage)
+        <span class="git-staged">modified:   Le_Callennec_Benoit_2.txt</span>
+
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git restore &lt;file&gt;..." to discard changes in working directory)
+        <span class="git-unstaged">modified:   Le_Callennec_Benoit_2.txt</span>
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>9.5 <mono>git commit --verbose</mono></h2>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+# Your branch is ahead of 'origin/main' by 1 commit.
+#
+# Changes to be committed:
+# modified:   Le_Callennec_Benoit_2.txt
+#
+# ------------------------ >8 ------------------------
+# Do not modify or remove the line above.
+# Everything below it will be ignored.
+diff --git a/Le_Callennec_Benoit_2.txt b/Le_Callennec_Benoit_2.txt
+index d93666c..74a0b8c 100644
+--- a/Le_Callennec_Benoit_2.txt
++++ b/Le_Callennec_Benoit_2.txt
+@@ -3,3 +3,5 @@ Version 0.2: parallel commit.
+ Version 0.3: parallel commit 2.
+ Version 0.4: parallel commit 3.
+ Version 0.5: parallel commit coming from main.
++Version 0.6: some modifications to mark it as modified.
++Version 0.7: some modifications while already in index.
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>9.5 <mono>git commit --all</mono></h2>
+          <p><highlight><mono>git commit --all</mono></highlight> équivaut à :</p>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git add -u
+git commit ...
+            </code></pre>
+          </div>
+          <br>
+          <p>Ne commite pas les nouveaux fichiers</p>
+          <br>
+          <p><error>Dangereux car on peut commiter des modifications par erreur</error></p>
+        </section>
+
+      </section>
+
+      <!----------          9.6 LA BOUCLE QUOTIDIENNE          ---------->
+      <section>
+
+        <section>
+          <h2>9.6 Faire des modifications</h2>
+          <ol class="steps">
+            <li>Se mettre à jour sur <mono>main</mono></li>
+            <li>Créer une nouvelle branche</li>
+            <li>Faire des modifications sur sa branche</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>9.6 Faire des modifications - MAJ</h2>
+          <h3><highlight>Récupérer les dernières modifications sur <mono>main</mono></highlight></h3>
+          <div class="syntax">
+            <div>
+              <p class="small"><b>Moderne</b></p>
+              <pre><code class="language-bash" data-trim>
+git switch main
+git pull --rebase
+              </code></pre>
+            </div>
+            <div>
+              <p class="small"><b>Classique</b></p>
+              <pre><code class="language-bash" data-trim>
+git checkout main
+git pull --rebase
+              </code></pre>
+            </div>
+          </div>
+          <br>
+          <p class="figure"><img src="./medias/git_graph_maj.png" alt="Historique : main, origin et origin/HEAD sur « DONE Cleaned default readme file. », au-dessus de « Initial commit »" width="1100px"></p>
+        </section>
+
+        <section>
+          <h2>9.6 <mono>git switch</mono> ou <mono>git checkout</mono> ?</h2>
+          <p><mono>git checkout</mono> fait tout : changer de branche, créer une branche, restaurer des fichiers…</p>
+          <p>Depuis Git 2.23, ses rôles sont séparés en deux commandes plus claires :</p>
+          <table class="defs">
+            <tr><td><b>Classique</b></td><td><b>Moderne</b></td></tr>
+            <tr><td><mono>git checkout &lt;branche&gt;</mono></td><td><mono>git switch &lt;branche&gt;</mono></td></tr>
+            <tr><td><mono>git branch &lt;b&gt;</mono> + <mono>git checkout &lt;b&gt;</mono></td><td><mono>git switch -c &lt;b&gt;</mono></td></tr>
+            <tr><td><mono>git checkout -b &lt;b&gt;</mono></td><td><mono>git switch -c &lt;b&gt;</mono></td></tr>
+            <tr><td><mono>git checkout -- &lt;file&gt;</mono></td><td><mono>git restore &lt;file&gt;</mono></td></tr>
+          </table>
+          <br>
+          <p><highlight>Les deux fonctionnent.</highlight> Vous croiserez <mono>checkout</mono> partout (docs, collègues, Stack Overflow).</p>
+        </section>
+
+        <section>
+          <h2>9.6 Faire des modifications - Branche</h2>
+          <h3><highlight>Créer sa branche de développement</highlight></h3>
+          <div class="syntax">
+            <div>
+              <p class="small"><b>Moderne</b></p>
+              <pre><code class="language-bash" data-trim>
+git switch -c &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+              </code></pre>
+            </div>
+            <div>
+              <p class="small"><b>Classique</b></p>
+              <pre><code class="language-bash" data-trim>
+git branch &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+git checkout &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+              </code></pre>
+            </div>
+          </div>
+          <br>
+          <p class="figure"><img src="./medias/git_graph_branche.png" alt="Historique : la nouvelle branche BLC_001_CreateAuthorFile pointe sur le même commit que main" width="1100px"></p>
+        </section>
+
+        <section>
+          <h2>9.6 Faire des modifications</h2>
+          <p class="figure"><img src="./medias/git_graph_modifications.png" alt="Git Graph : « Uncommitted Changes (1) » avec le fichier Le_Callennec_Benoit.txt, au-dessus de la branche BLC_001_CreateAuthorFile" width="1100px"></p>
+        </section>
+
+        <section>
+          <h2>9.6 Faire des modifications - <mono>status</mono></h2>
+          <p>Un nouveau fichier (vide) a été créé :</p>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+> git status
+On branch BLC_001_CreateAuthorFile
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+        Le_Callennec_Benoit.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>9.6 Faire des modifications - <mono>commit</mono></h2>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+> git add Le_Callennec_Benoit.txt
+> git commit -m "DONE Added author file."
+[BLC_001_CreateAuthorFile ed58dd9] DONE Added author file.
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 Le_Callennec_Benoit.txt
+            </code></pre>
+          </div>
+          <br>
+          <p class="figure"><img src="./medias/git_graph_commit.png" alt="Historique : BLC_001_CreateAuthorFile sur « DONE Added author file. », un commit au-dessus de main" width="1100px"></p>
+        </section>
+
+        <section>
+          <h2>9.6 Faire des modifications - <mono>diff</mono></h2>
+          <p>Le fichier est maintenant suivi : après l'avoir édité, <mono>git diff</mono> montre les modifications.</p>
+          <p class="small">(<mono>git diff</mono> n'affiche rien pour un fichier non suivi.)</p>
+          <div class="term">
+            <pre><code class="nohighlight" data-trim>
+> git diff
+diff --git a/Le_Callennec_Benoit.txt b/Le_Callennec_Benoit.txt
+index e69de29..0a64225 100644
+--- a/Le_Callennec_Benoit.txt
++++ b/Le_Callennec_Benoit.txt
+@@ -0,0 +1,4 @@
++Author: Benoit Le Callennec
++Version 0.1: first edit to this file.
++
++
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>9.6 Faire des modifications - <mono>commit</mono> #2</h2>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git add Le_Callennec_Benoit.txt
+git commit -m "DONE Edited author file."
+            </code></pre>
+          </div>
+          <br>
+          <p class="figure"><img src="./medias/git_graph_commit2.png" alt="Historique : un second commit « DONE Edited author file. » sur BLC_001_CreateAuthorFile" width="1100px"></p>
+        </section>
+
+        <section>
+          <h2>9.6 Publier ses modifications</h2>
+          <ol class="steps">
+            <li>Fusionner ses modifications avec <mono>main</mono></li>
+            <li>Pousser ses modifications</li>
+            <li>Effacer sa branche locale</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>9.6 Publier ses modifications - <mono>fetch</mono></h2>
+          <p>Pendant ce temps, quelqu'un a poussé sur <mono>origin/main</mono>… <mono>git fetch</mono> récupère les nouveaux commits sans toucher à vos branches.</p>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git fetch
+            </code></pre>
+          </div>
+          <br>
+          <p class="figure"><img src="./medias/git_graph_fetch.png" alt="Historique après fetch : origin/main a avancé avec « DONE Added parallel author file. », la branche BLC_001_CreateAuthorFile part de l'ancien main" width="1100px"></p>
+        </section>
+
+        <section>
+          <h2>9.6 Publier ses modifications - mettre à jour <mono>main</mono></h2>
+          <div class="syntax">
+            <div>
+              <p class="small"><b>Moderne</b></p>
+              <pre><code class="language-bash" data-trim>
+git switch main
+git pull --rebase
+              </code></pre>
+            </div>
+            <div>
+              <p class="small"><b>Classique</b></p>
+              <pre><code class="language-bash" data-trim>
+git checkout main
+git pull --rebase
+              </code></pre>
+            </div>
+          </div>
+          <br>
+          <p class="figure"><img src="./medias/git_graph_pull.png" alt="Historique : main et origin à jour sur « DONE A commit from main. », la branche BLC_MergeCommit à côté avec « DONE Some important features here. »" width="800px"></p>
+        </section>
+
+        <section>
+          <h2>9.6 Publier ses modifications - <mono>merge</mono></h2>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git merge &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+            </code></pre>
+          </div>
+          <br>
+          <p class="figure"><img src="./medias/git_graph_merge.png" alt="Historique : commit de merge « Merge branch 'BLC_MergeCommit' » sur main, origin/main encore un commit en dessous" width="800px"></p>
+        </section>
+
+        <section>
+          <h2>9.6 Publier ses modifications - <mono>push</mono></h2>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git push origin main
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>9.6 Publier ses modifications - Clean</h2>
+          <div class="cmd">
+            <pre><code class="language-bash" data-trim>
+git branch --delete &lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;
+            </code></pre>
+          </div>
+          <br>
+          <p class="figure"><img src="./medias/git_graph_clean.png" alt="Historique : main, origin et origin/HEAD sur le commit de merge, la branche de développement a disparu" width="800px"></p>
+        </section>
+
+      </section>
+
+      <!----------          EXERCICE          ---------->
+      <section>
+
+        <section>
+          <h2>💻 Exercice</h2>
+          <p>Par groupes de 2, reproduire les exemples donnés dans ce chapitre, sur un repo GitLab commun :</p>
+          <ol class="steps small">
+            <li>Les deux membres clonent le repo</li>
+            <li>Chacun crée sa branche <mono>&lt;Dev&gt;_&lt;Id&gt;_&lt;Summary&gt;</mono> et y commite un fichier à son nom</li>
+            <li>A fusionne sa branche dans <mono>main</mono> et pousse</li>
+            <li>B fait <mono>git fetch</mono> et observe l'historique, puis met à jour <mono>main</mono>, fusionne sa branche et pousse</li>
+            <li>Chacun efface sa branche locale</li>
+            <li>Comparer <mono>git log</mono> des deux côtés</li>
+          </ol>
+        </section>
+
+      </section>
+
+    </div>
+  </div>
+
+  <!----------          CONTENT          ---------->
+
+  <script src="dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+      hash: true,
+      width: 1920,
+      height: 1080,
+      transition: "none",
+      center: false,
+      slideNumber: 'c/t',
+
+      // Learn about plugins: https://revealjs.com/plugins/
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+  </script>
+</body>
+
+</html>
