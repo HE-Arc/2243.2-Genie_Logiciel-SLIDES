@@ -1,0 +1,40 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+skinparam defaultFontSize 16
+hide footbox
+participant "Perdu" as lost #FFFFFF
+database "Working Tree" as wt
+database "Index" as idx
+database "HEAD" as head
+database "Remote" as remote
+
+wt -> wt : Edit some files
+hnote over wt : Modified Files 1
+wt ->x lost : <size:20>**git restore --worktree <file>**</size>\n//➔ Depuis l'index (= HEAD)//
+wt -> wt : Edit some files
+hnote over wt : Modified Files 2
+wt -> idx : <size:20>**git add <file>**</size>
+hnote over idx : Staged Files 2
+wt -> wt : Edit some files
+hnote over wt : Modified Files 3
+wt ->x lost : <size:20>**git restore --worktree <file>**</size>\n//➔ Depuis l'index (avec le add)//
+idx -> wt : <size:20>**git restore --staged <file>**</size>\n//Les modifications restent dans le Working Tree//
+hnote over wt : Modified Files 2
+wt -> idx : <size:20>**git add <file>**</size>
+hnote over idx : Staged Files 2
+idx -> head : <size:20>**git commit -m <msg>**</size>
+hnote over head : Commit a1b2c3d
+alt Publier
+  head -> remote : <size:20>**git push origin main**</size>
+  hnote over remote : Commit a1b2c3d
+else Annuler le commit, garder l'index
+  head -> idx : <size:20>**git reset --soft HEAD~1**</size>
+  hnote over idx : Staged Files 2
+else Annuler le commit, garder le Working Tree
+  head -> wt : <size:20>**git reset --mixed HEAD~1**</size>
+  hnote over wt : Modified Files 2
+else Tout annuler
+  head ->x lost : <size:20>**git reset --hard HEAD~1**</size>
+end
+@enduml

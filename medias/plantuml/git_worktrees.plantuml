@@ -1,0 +1,37 @@
+@startuml
+skin rose
+skinparam defaultFontName Arial
+skinparam defaultFontSize 18
+skinparam nodesep 40
+skinparam ranksep 90
+
+rectangle "**proj/**  <color:blue>[BLC_001_Feature]</color>" as w1 {
+  card "Working Tree" as w1t #E5F5E5
+  card "index" as w1i #E5F5E5
+  card "HEAD" as w1h #E5F5E5
+}
+rectangle "**proj-hotfix/**  <color:blue>[hotfix]</color>" as w2 {
+  card "Working Tree" as w2t #E5F5E5
+  card "index" as w2i #E5F5E5
+  card "HEAD" as w2h #E5F5E5
+}
+rectangle "**proj-review/**  <color:blue>[BLC_002_Login]</color>" as w3 {
+  card "Working Tree" as w3t #E5F5E5
+  card "index" as w3i #E5F5E5
+  card "HEAD" as w3h #E5F5E5
+}
+w1t -[hidden]right- w1i
+w1i -[hidden]right- w1h
+w2t -[hidden]right- w2i
+w2i -[hidden]right- w2h
+w3t -[hidden]right- w3i
+w3i -[hidden]right- w3h
+w1 -[hidden]right- w2
+w2 -[hidden]right- w3
+
+rectangle "<size:26>**proj/.git**</size>\n\n**objects/** : commits, trees, blobs\n**refs/** : branches, tags\n**config**, **hooks/**\n**worktrees/**" as repo #FFE5E5;line:red;line.bold
+
+w1 -[#blue,thickness=3]-> repo
+w2 -[#blue,dashed,thickness=3]-> repo
+w3 -[#blue,dashed,thickness=3]-> repo
+@enduml
